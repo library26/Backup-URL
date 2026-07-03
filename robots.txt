@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://library26.github.io/Backup-URL/sitemap.xml
