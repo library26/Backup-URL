@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <!-- "情迷" 荷尔蒙暗紫红径向渐变背景 -->
+    <radialGradient id="bgGlow" cx="50%" cy="50%" r="75%">
+      <stop offset="0%" stop-color="#2a123a" />
+      <stop offset="45%" stop-color="#140a1b" />
+      <stop offset="100%" stop-color="#0b0c10" />
+    </radialGradient>
+    
+    <!-- 荷尔蒙玫瑰粉红 -> 魅惑紫 -> 科技蓝渐变色 -->
+    <linearGradient id="neonGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ff2d55" />
+      <stop offset="50%" stop-color="#ba55d3" />
+      <stop offset="100%" stop-color="#4a90e2" />
+    </linearGradient>
+    
+    <!-- 霓虹发光滤镜 -->
+    <filter id="neonGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="6" result="blur1" />
+      <feGaussianBlur stdDeviation="12" result="blur2" />
+      <feMerge>
+        <feMergeNode in="blur2" />
+        <feMergeNode in="blur1" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- 120px 圆角高阶暗色卡片背景 -->
+  <rect width="512" height="512" rx="120" fill="url(#bgGlow)" />
+  
+  <!-- 外部暧昧氛围装饰圈 -->
+  <circle cx="256" cy="256" r="215" fill="none" stroke="url(#neonGrad)" stroke-width="2" stroke-opacity="0.15" stroke-dasharray="10 15" />
+  
+  <!-- 开口笑箱子机器人主体组 -->
+  <g transform="translate(6, -10)">
+    <!-- 左开口盖子 (向左外侧折角) -->
+    <path d="M 130 190 L 105 135 C 145 135 185 137 235 142 L 245 190 Z" 
+          fill="none" 
+          stroke="url(#neonGrad)" 
+          stroke-width="14" 
+          stroke-linejoin="round" 
+          stroke-linecap="round" 
+          filter="url(#neonGlow)"/>
+          
+    <!-- 右开口盖子 (向右外侧折角) -->
+    <path d="M 370 190 L 395 135 C 355 135 315 137 265 142 L 255 190 Z" 
+          fill="none" 
+          stroke="url(#neonGrad)" 
+          stroke-width="14" 
+          stroke-linejoin="round" 
+          stroke-linecap="round" 
+          filter="url(#neonGlow)"/>
+          
+    <!-- 纸箱正脸矩形 -->
+    <rect x="130" y="190" width="240" height="190" rx="36" 
+          fill="rgba(255, 255, 255, 0.03)" 
+          stroke="url(#neonGrad)" 
+          stroke-width="14" 
+          stroke-linejoin="round" 
+          filter="url(#neonGlow)"/>
+          
+    <!-- 经典胶囊左眼 -->
+    <rect x="195" y="245" width="20" height="42" rx="10" 
+          fill="url(#neonGrad)" 
+          filter="url(#neonGlow)"/>
+          
+    <!-- 经典胶囊右眼 -->
+    <rect x="285" y="245" width="20" height="42" rx="10" 
+          fill="url(#neonGrad)" 
+          filter="url(#neonGlow)"/>
+          
+    <!-- 开口弧度微笑嘴巴 -->
+    <path d="M 205 320 Q 250 345 295 320" 
+          fill="none" 
+          stroke="url(#neonGrad)" 
+          stroke-width="14" 
+          stroke-linecap="round" 
+          filter="url(#neonGlow)"/>
+  </g>
+</svg>
