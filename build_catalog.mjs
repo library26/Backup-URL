@@ -85,6 +85,19 @@ function obfuscateUrl(url) {
   return Buffer.from(url, 'utf8').toString('base64');
 }
 
+function getInfoTimestamp(info, infoPath) {
+  const candidate = info.created_at || info.createdAt || info.updated_at || info.updatedAt || info.resource_structure?.collected_at;
+  const parsed = candidate ? Date.parse(candidate) : Number.NaN;
+  if (Number.isFinite(parsed)) return parsed;
+
+  try {
+    const stat = fs.statSync(infoPath);
+    return Math.max(stat.mtimeMs, fs.statSync(path.dirname(infoPath)).mtimeMs);
+  } catch {
+    return 0;
+  }
+}
+
 function findImages(dir, depth = 0, images = []) {
   if (depth > 4 || images.length > 120) return images;
   let entries = [];
@@ -199,8 +212,9 @@ function main() {
       searchTitles: [...new Set([original, ...Object.values(titles)])],
       category: category.key,
       categoryOrder: category.order,
+      createdAt: getInfoTimestamp(info, infoPath),
       encodedUrl: obfuscateUrl(info.share_url),
-      thumb: fs.existsSync(thumbPath) ? `demo_v5_thumbnails/${thumbFile}` : '',
+      thumb: fs.existsSync(thumbPath) ? `thumbnails/${thumbFile}` : '',
       icon: category.icon,
       placeholder: id.slice(-2).toUpperCase(),
       hue: Number.parseInt(id.slice(0, 6), 16) % 360
@@ -223,6 +237,7 @@ function main() {
       searchTitles: Object.values(titles),
       category: category.key,
       categoryOrder: category.order,
+      createdAt: infoPath && fs.existsSync(infoPath) ? getInfoTimestamp(info || {}, infoPath) : 0,
       encodedUrl: obfuscateUrl(preferredShare.share_url),
       thumb: legacyCollection?.thumbnail || category.fallback,
       icon: legacyCollection?.status_icon || category.icon,

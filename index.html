@@ -67,7 +67,7 @@
   .title { font-size: 19px; font-weight: 800; letter-spacing: -0.3px; color: #fff; }
   .bio { font-size: 11.5px; color: var(--text-muted); margin-top: 5px; max-width: 320px; line-height: 1.5; }
 
-  /* === Telegram / Discord 固定导流入口（原样保留，不做任何改动） === */
+  
   .focus-banners { display: flex; flex-direction: column; gap: 10px; margin: 18px 0 20px; width: 100%; }
   .focus-banner {
     display: flex; align-items: center; padding: 14px 18px; border-radius: 12px;
@@ -88,7 +88,7 @@
   .banner-arrow { font-size: 18px; opacity: 0.85; transition: transform 0.2s; }
   .focus-banner:hover .banner-arrow { transform: translateX(3px); }
 
-  /* === 搜索框 === */
+  
   .search-bar {
     display: flex; align-items: center; gap: 8px;
     background: var(--card-bg); border: 1px solid var(--card-border);
@@ -110,7 +110,7 @@
   }
   .search-bar.has-text .search-clear { display: flex; }
 
-  /* === 分类 chip 行（数据驱动，未来可任意扩充数量） === */
+  
   .chip-row {
     display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 14px;
     scrollbar-width: none; -ms-overflow-style: none;
@@ -128,11 +128,17 @@
     box-shadow: 0 4px 14px rgba(175, 82, 222, 0.35);
   }
 
-  .section-title {
+  .section-title, .section-group-title {
     font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px;
     color: var(--text-muted); margin-bottom: 10px; padding-left: 4px;
     display: flex; justify-content: space-between; align-items: center;
   }
+  .section-group-title {
+    width: 100%; margin: 4px 0 0; padding: 4px 2px 0;
+    color: rgba(255,255,255,0.78); text-transform: none; letter-spacing: 0;
+  }
+  .section-group-title strong { font-size: 12px; color: #fff; }
+  .section-group-title span { font-size: 10px; opacity: 0.72; font-weight: 700; }
   .result-count { font-weight: 600; text-transform: none; letter-spacing: 0; opacity: 0.7; }
 
   .list-container { display: flex; flex-direction: column; gap: 10px; }
@@ -161,7 +167,7 @@
       #25242d;
   }
   .card-body { flex-grow: 1; min-width: 0; }
-  /* 卡片标题只保留一个信息层级：不放人名副标题，避免多语言换行冲突 */
+  
   .card-title {
     font-size: 13px; font-weight: 700; color: #fff; display: -webkit-box;
     -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
@@ -186,7 +192,7 @@
   .lang-link { cursor: pointer; margin: 0 4px; text-decoration: underline; }
   .lang-link.active { color: #fff; font-weight: 800; text-decoration: none; }
 
-  /* === 桌面端适配 (响应式网格布局) === */
+  
   @media (min-width: 768px) {
     .container { max-width: 960px; padding: 40px 24px; }
     .focus-banners { flex-direction: row; gap: 20px; }
@@ -195,6 +201,7 @@
     .chip-row { justify-content: center; flex-wrap: wrap; overflow-x: visible; padding-bottom: 0; margin-bottom: 24px; }
     .cat-chip { margin-bottom: 8px; }
     .list-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 16px; }
+    .section-group-title { grid-column: 1 / -1; margin-top: 8px; }
     .load-more { max-width: 380px; margin: 24px auto; }
   }
   @media (min-width: 1200px) {
@@ -202,7 +209,6 @@
     .list-container { grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); }
   }
 </style>
-
 
 <link rel="icon" type="image/png" sizes="48x48" href="favicon-48.png">
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
@@ -226,6 +232,7 @@
     <p class="bio" id="ui-bio">PikPak 热门分享与网盘资源导航，建议收藏本页防失联。</p>
   </header>
 
+  
   <div class="focus-banners">
     <a href="#" class="focus-banner tg-banner" id="tgBanner" target="_blank" rel="noopener noreferrer">
       <div class="banner-icon">T</div>
@@ -245,12 +252,14 @@
     </a>
   </div>
 
+  
   <div class="search-bar" id="searchBar">
     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
     <input type="text" id="searchInput" placeholder="搜索资源标题或创作者…">
     <button class="search-clear" id="searchClear">✕</button>
   </div>
 
+  
   <div class="chip-row" id="chipRow"></div>
 
   <div class="section-title">
@@ -262,6 +271,7 @@
   <div class="empty-state" id="emptyState">未找到匹配的内容，换个关键词或分类试试</div>
   <button class="load-more" id="loadMore" type="button">加载更多</button>
 
+  
   <footer class="footer">
     <span class="lang-link" data-lang="en" onclick="setLanguage('en')">EN</span> |
     <span class="lang-link" data-lang="zh" onclick="setLanguage('zh')">简</span> |
@@ -273,16 +283,6 @@
 
 <script src="data.js"></script>
 <script>
-/* ===================================================================
- * 通用架构说明：
- * - CATEGORIES 是一个数组，不写死数量。未来要加新的大类型卡片，
- *   直接往这个数组里 push 一条 {key, labels:{en,zh,zh-hant,ja,ko}} 即可。
- * - 创作者不再单独开一个展示区，而是作为搜索的匹配字段之一。
- * - 卡片标题只保留一层信息，不叠加人名副标题。
- * - 多语言逻辑完全沿用线上 template.html 的机制：
- *   translations 表驱动 UI 文案，资源标题用 titles{en,zh,zh-hant,ja,ko}，
- *   navigator.language 自动检测语言，footer 手动切换语言。
- * =================================================================== */
 
 const UI_TRANSLATIONS = {
   en: {
@@ -293,7 +293,9 @@ const UI_TRANSLATIONS = {
     sectionTitle: "Verified Directories",
     searchPlaceholder: "Search titles or creators…",
     emptyText: "No matches. Try another keyword or category.",
-    countUnit: " items", loadMore: "Load more"
+    collectionSection: "Top collections",
+    latestSection: "Latest in category",
+    countUnit: " items", loadMore: "Load more", loadingText: "Loading..."
   },
   zh: {
     title: "PikPak 资源合集入口",
@@ -303,7 +305,9 @@ const UI_TRANSLATIONS = {
     sectionTitle: "资源目录",
     searchPlaceholder: "搜索资源标题或创作者…",
     emptyText: "未找到匹配的内容，换个关键词或分类试试",
-    countUnit: " 项", loadMore: "加载更多"
+    collectionSection: "热门资源",
+    latestSection: "最新整理",
+    countUnit: " 项", loadMore: "加载更多", loadingText: "加载中..."
   },
   'zh-hant': {
     title: "PikPak 資源合集入口",
@@ -313,7 +317,9 @@ const UI_TRANSLATIONS = {
     sectionTitle: "資源目錄",
     searchPlaceholder: "搜尋資源標題或創作者…",
     emptyText: "未找到匹配的內容，換個關鍵詞或分類試試",
-    countUnit: " 項", loadMore: "載入更多"
+    collectionSection: "熱門資源",
+    latestSection: "最新整理",
+    countUnit: " 項", loadMore: "載入更多", loadingText: "載入中..."
   },
   ja: {
     title: "PikPak MyFans 限定配布",
@@ -323,7 +329,9 @@ const UI_TRANSLATIONS = {
     sectionTitle: "確認済みのディレクトリ",
     searchPlaceholder: "タイトルやクリエイター名で検索…",
     emptyText: "該当する内容が見つかりません。別のキーワードやカテゴリをお試しください",
-    countUnit: " 件", loadMore: "さらに表示"
+    collectionSection: "人気まとめ",
+    latestSection: "新着整理",
+    countUnit: " 件", loadMore: "さらに表示", loadingText: "読み込み中..."
   },
   ko: {
     title: "PikPak 픽팍 콘텐츠 모음",
@@ -333,7 +341,9 @@ const UI_TRANSLATIONS = {
     sectionTitle: "확인된 디렉토리",
     searchPlaceholder: "제목이나 크리에이터로 검색…",
     emptyText: "일치하는 항목이 없습니다. 다른 검색어나 카테고리를 시도해보세요",
-    countUnit: "개", loadMore: "더 보기"
+    collectionSection: "인기 모음",
+    latestSection: "최신 정리",
+    countUnit: "개", loadMore: "더 보기", loadingText: "로딩 중..."
   }
 };
 
@@ -347,8 +357,6 @@ const CATEGORIES = [
   { key: 'cn',       labels: { en: 'CN Creators', zh: '华语名优',        'zh-hant': '華語名優',        ja: '華人クリエイター', ko: '중화권스타' } },
     { key: 'jav',      labels: { en: 'JAV',         zh: '日本 AV',         'zh-hant': '日本 AV',         ja: '日本AV',     ko: '일본AV' } },
   { key: 'aidrama',  labels: { en: 'AI Drama',    zh: 'AI 短剧',         'zh-hant': 'AI 短劇',         ja: 'AIショートドラマ', ko: 'AI 숏드라마' } },
-  // 示例：未来新增大类，直接在这里加一行，例如：
-  // { key: 'fantia', labels: { en: 'Fantia', zh: 'Fantia', 'zh-hant': 'Fantia', ja: 'Fantia', ko: 'Fantia' } },
 ];
 
 const RESOURCES = [
@@ -460,16 +468,6 @@ let activeCategory = 'all';
 let searchQuery = '';
 let renderedLimit = PAGE_SIZE;
 
-/*
- * 搜索规则（按你的要求重写）：
- * 1. 只匹配「卡片标题」，不再用 creators 字段做匹配。
- * 2. 一级大分类「全部」是特殊的搜索作用域：只要在全部资源里能搜到标题匹配的分享，
- *    就应该展示出来——所以只要输入框有关键词，分类筛选会被自动切到「全部」，
- *    不会被当前选中的具体分类挡住。
- * 3. 搜索结果按「标题里关键词出现的位置」排序，出现越靠前（标题匹配度越高）的
- *    卡片排序优先级越高，排在结果列表最前面。
- */
-
 function renderChips() {
   const row = document.getElementById('chipRow');
   
@@ -489,7 +487,6 @@ function renderChips() {
   row.querySelectorAll('.cat-chip').forEach(chip => {
     chip.addEventListener('click', () => {
       activeCategory = chip.getAttribute('data-cat');
-      // 手动选分类＝明确缩小范围的动作，清空当前搜索词，避免"全部搜索"残留造成混淆
       if (searchQuery) {
         searchQuery = '';
         const input = document.getElementById('searchInput');
@@ -515,6 +512,25 @@ function decodeUrl(encodedUrl) {
   }
 }
 
+function getCategoryMeta(categoryKey) {
+  return CATEGORIES.find(category => category.key === categoryKey) || null;
+}
+
+function getCategoryLabel(categoryKey) {
+  const category = getCategoryMeta(categoryKey);
+  return category?.labels?.[currentLang] || category?.labels?.en || categoryKey;
+}
+
+function getResourceTime(resource) {
+  return Number(resource.createdAt || resource.updatedAt || 0);
+}
+
+function sortByLatest(a, b) {
+  const timeDiff = getResourceTime(b.resource) - getResourceTime(a.resource);
+  if (timeDiff) return timeDiff;
+  return a.index - b.index;
+}
+
 function getFilteredResources() {
   const query = searchQuery.toLowerCase();
   const matched = CATALOG_RESOURCES.map((resource, index) => {
@@ -530,13 +546,44 @@ function getFilteredResources() {
   return matched.sort((a, b) => {
     if (query && a.titleMatch !== b.titleMatch) return a.titleMatch - b.titleMatch;
     if (!query && Boolean(a.resource.isCollection) !== Boolean(b.resource.isCollection)) return Number(Boolean(b.resource.isCollection)) - Number(Boolean(a.resource.isCollection));
+    if (!query && activeCategory !== 'all') return sortByLatest(a, b);
+    if (query) return sortByLatest(a, b);
     return a.index - b.index;
   });
 }
 
-function renderResources(items) {
-  const list = document.getElementById('resourceList');
-  list.innerHTML = items.slice(0, renderedLimit).map(({ resource }) => {
+function buildAllSections(items) {
+  const collectionItems = items
+    .filter(item => item.resource.isCollection)
+    .sort((a, b) => (a.resource.categoryOrder || 999) - (b.resource.categoryOrder || 999));
+  const normalItems = items.filter(item => !item.resource.isCollection);
+  const categoryKeys = CATEGORIES
+    .filter(category => category.key !== 'all')
+    .sort((a, b) => {
+      const orderA = CATALOG_RESOURCES.find(resource => resource.category === a.key)?.categoryOrder || 999;
+      const orderB = CATALOG_RESOURCES.find(resource => resource.category === b.key)?.categoryOrder || 999;
+      return orderA - orderB;
+    })
+    .map(category => category.key);
+
+  const groups = [];
+  if (collectionItems.length) {
+    groups.push({ key: 'collections', label: UI_TRANSLATIONS[currentLang]?.collectionSection || 'Top collections', items: collectionItems });
+  }
+
+  for (const categoryKey of categoryKeys) {
+    const groupItems = normalItems
+      .filter(item => item.resource.category === categoryKey)
+      .sort(sortByLatest);
+    if (groupItems.length) {
+      groups.push({ key: categoryKey, label: getCategoryLabel(categoryKey), items: groupItems, suffix: UI_TRANSLATIONS[currentLang]?.latestSection || '' });
+    }
+  }
+
+  return groups;
+}
+
+function renderCard(resource) {
     const title = resource.titles?.[currentLang] || resource.titles?.en || resource.original;
     const preview = resource.thumb
       ? `<img src="${escapeHtml(resource.thumb)}" class="preview-img" alt="" loading="lazy">`
@@ -547,7 +594,27 @@ function renderResources(items) {
       <div class="card-body"><div class="card-title">${escapeHtml(title)}</div></div>
       <div class="status-icon">${escapeHtml(resource.icon || '◆')}</div>
     </a>`;
-  }).join('');
+}
+
+function renderResources(items) {
+  const list = document.getElementById('resourceList');
+  if (activeCategory === 'all' && !searchQuery) {
+    let remaining = renderedLimit;
+    const html = [];
+    for (const group of buildAllSections(items)) {
+      if (remaining <= 0) break;
+      const visibleItems = group.items.slice(0, remaining);
+      if (!visibleItems.length) continue;
+      const suffix = group.suffix ? `<span>${escapeHtml(group.suffix)}</span>` : '';
+      html.push(`<div class="section-group-title"><strong>${escapeHtml(group.label)}</strong>${suffix}</div>`);
+      html.push(...visibleItems.map(({ resource }) => renderCard(resource)));
+      remaining -= visibleItems.length;
+    }
+    list.innerHTML = html.join('');
+    return;
+  }
+
+  list.innerHTML = items.slice(0, renderedLimit).map(({ resource }) => renderCard(resource)).join('');
 }
 
 function applyFilters() {
@@ -566,7 +633,6 @@ function toggleClearBtn() {
   bar.classList.toggle('has-text', document.getElementById('searchInput').value.length > 0);
 }
 
-// 沿用线上机制：一套 translations 驱动所有静态 UI 文案
 function setLanguage(lang) {
   const t = UI_TRANSLATIONS[lang] || UI_TRANSLATIONS.en;
   currentLang = UI_TRANSLATIONS[lang] ? lang : 'en';
@@ -591,7 +657,6 @@ function setLanguage(lang) {
   applyFilters();
 }
 
-// 沿用线上机制：根据 navigator.language 自动匹配初始语言
 function detectLanguage() {
   const userLang = navigator.language || navigator.userLanguage;
   const langLower = userLang.toLowerCase();
@@ -612,7 +677,6 @@ function detectLanguage() {
 document.getElementById('searchInput').addEventListener('input', (e) => {
   searchQuery = e.target.value.trim().toLowerCase();
   if (searchQuery) {
-    // 输入关键词＝进入「全部」搜索作用域，分类 chip 同步切回全部并高亮
     activeCategory = 'all';
     renderChips();
   }
@@ -629,10 +693,34 @@ document.getElementById('searchClear').addEventListener('click', () => {
   applyFilters();
 });
 
-document.getElementById('loadMore').addEventListener('click', () => {
-  renderedLimit += PAGE_SIZE;
-  applyFilters();
+const loadMoreBtn = document.getElementById('loadMore');
+let isLoading = false;
+
+loadMoreBtn.addEventListener('click', () => {
+  if (isLoading) return;
+  isLoading = true;
+  loadMoreBtn.textContent = UI_TRANSLATIONS[currentLang]?.loadingText || "Loading...";
+  
+  setTimeout(() => {
+    renderedLimit += PAGE_SIZE;
+    applyFilters();
+    isLoading = false;
+  }, 100);
 });
+
+if ('IntersectionObserver' in window) {
+  const observer = new IntersectionObserver((entries) => {
+    const target = entries[0];
+    if (target.isIntersecting && loadMoreBtn.classList.contains('show') && !isLoading) {
+      loadMoreBtn.click();
+    }
+  }, {
+    rootMargin: '200px',
+    threshold: 0.1
+  });
+  
+  observer.observe(loadMoreBtn);
+}
 
 detectLanguage();
 </script>
