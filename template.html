@@ -185,7 +185,24 @@
   .footer { text-align: center; margin-top: 24px; font-size: 10px; color: var(--text-muted); }
   .lang-link { cursor: pointer; margin: 0 4px; text-decoration: underline; }
   .lang-link.active { color: #fff; font-weight: 800; text-decoration: none; }
+
+  /* === 桌面端适配 (响应式网格布局) === */
+  @media (min-width: 768px) {
+    .container { max-width: 960px; padding: 40px 24px; }
+    .focus-banners { flex-direction: row; gap: 20px; }
+    .focus-banner { flex: 1; margin: 0; }
+    .search-bar { max-width: 560px; margin: 0 auto 20px auto; }
+    .chip-row { justify-content: center; flex-wrap: wrap; overflow-x: visible; padding-bottom: 0; margin-bottom: 24px; }
+    .cat-chip { margin-bottom: 8px; }
+    .list-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 16px; }
+    .load-more { max-width: 380px; margin: 24px auto; }
+  }
+  @media (min-width: 1200px) {
+    .container { max-width: 1200px; }
+    .list-container { grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); }
+  }
 </style>
+
 
 <link rel="icon" type="image/png" sizes="48x48" href="favicon-48.png">
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
