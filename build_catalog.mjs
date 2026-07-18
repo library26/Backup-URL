@@ -28,8 +28,11 @@ const CATEGORY_MAP = {
   '[06] 华语独立名优 華人クリエイター 중화권스타': {
     key: 'cn', order: 6, fallback: 'thumbnails/e9ed601520cc3d2f9a0691a0d4569d35.jpg', icon: '◆'
   },
-  '[07] 日本AV JAV 일본AV': {
+    '[07] 日本AV JAV 일본AV': {
     key: 'jav', order: 7, fallback: 'thumbnails/309371d1e5629e6ae5df6b2c1dfa32e9.jpg', icon: '◆'
+  },
+  '[08] AI成人短剧 AIショートドラマ AI 숏드라마': {
+    key: 'aidrama', order: 8, fallback: 'thumbnails/309371d1e5629e6ae5df6b2c1dfa32e9.jpg', icon: '◆'
   }
 };
 

@@ -328,7 +328,8 @@ const CATEGORIES = [
   { key: 'twitter',  labels: { en: 'Twitter',     zh: 'Twitter 福利姬',  'zh-hant': 'Twitter 福利姬',  ja: 'Twitter流出', ko: '트위터 유출' } },
   { key: 'cosplay',  labels: { en: 'Cosplay',     zh: 'Cosplay 同人',    'zh-hant': 'Cosplay 同人',    ja: 'コスプレ',    ko: '코스프레' } },
   { key: 'cn',       labels: { en: 'CN Creators', zh: '华语名优',        'zh-hant': '華語名優',        ja: '華人クリエイター', ko: '중화권스타' } },
-  { key: 'jav',      labels: { en: 'JAV',         zh: '日本 AV',         'zh-hant': '日本 AV',         ja: '日本AV',     ko: '일본AV' } },
+    { key: 'jav',      labels: { en: 'JAV',         zh: '日本 AV',         'zh-hant': '日本 AV',         ja: '日本AV',     ko: '일본AV' } },
+  { key: 'aidrama',  labels: { en: 'AI Drama',    zh: 'AI 短剧',         'zh-hant': 'AI 短劇',         ja: 'AIショートドラマ', ko: 'AI 숏드라마' } },
   // 示例：未来新增大类，直接在这里加一行，例如：
   // { key: 'fantia', labels: { en: 'Fantia', zh: 'Fantia', 'zh-hant': 'Fantia', ja: 'Fantia', ko: 'Fantia' } },
 ];
@@ -454,10 +455,20 @@ let renderedLimit = PAGE_SIZE;
 
 function renderChips() {
   const row = document.getElementById('chipRow');
-  row.innerHTML = CATEGORIES.map(c => {
+  
+  let catsToRender = [...CATEGORIES];
+  if (currentLang === 'zh' || currentLang === 'zh-hant') {
+    const allCat = catsToRender.find(c => c.key === 'all');
+    const aiCat = catsToRender.find(c => c.key === 'aidrama');
+    const others = catsToRender.filter(c => c.key !== 'all' && c.key !== 'aidrama');
+    catsToRender = [allCat, aiCat, ...others];
+  }
+
+  row.innerHTML = catsToRender.map(c => {
     const label = c.labels[currentLang] || c.labels.en;
     return `<div class="cat-chip ${c.key === activeCategory ? 'active' : ''}" data-cat="${c.key}">${label}</div>`;
   }).join('');
+  
   row.querySelectorAll('.cat-chip').forEach(chip => {
     chip.addEventListener('click', () => {
       activeCategory = chip.getAttribute('data-cat');
