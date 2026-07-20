@@ -114,15 +114,24 @@ function findImages(dir, depth = 0, images = []) {
     return images;
   }
 
+  // First pass: collect files in current directory to prioritize them
+  for (const entry of entries) {
+    if (entry.name.startsWith('.') || entry.name === '分享信息.json' || entry.name === '缩略图索引.json') continue;
+    const fullPath = path.join(dir, entry.name);
+    if (entry.isFile() && imageExtensions.has(path.extname(entry.name).toLowerCase())) {
+      try {
+        if (fs.statSync(fullPath).size > 12 * 1024) images.push(fullPath);
+      } catch {}
+    }
+  }
+
+  // Second pass: recursively find in subdirectories
   for (const entry of entries) {
     if (entry.name.startsWith('.') || entry.name === '分享信息.json' || entry.name === '缩略图索引.json') continue;
     const fullPath = path.join(dir, entry.name);
     if (entry.isDirectory()) {
       findImages(fullPath, depth + 1, images);
-    } else if (entry.isFile() && imageExtensions.has(path.extname(entry.name).toLowerCase())) {
-      try {
-        if (fs.statSync(fullPath).size > 12 * 1024) images.push(fullPath);
-      } catch {}
+      if (images.length > 120) break;
     }
   }
   return images;
@@ -259,7 +268,7 @@ function main() {
     const titles = COLLECTION_TITLES[category.key];
     if (!titles) continue;
     const folder = path.join(SOURCE_ROOT, categoryName);
-    const collectionThumb = legacyCollection?.thumbnail || makeFolderThumbnail(folder, id) || category.fallback;
+    const collectionThumb = makeFolderThumbnail(folder, id) || legacyCollection?.thumbnail || category.fallback;
     resources.push({
       id,
       original: titles.en,
