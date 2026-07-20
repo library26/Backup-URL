@@ -63,7 +63,14 @@ const COLLECTION_TITLES = {
   fc2: LEGACY_COLLECTIONS.fc2.titles,
   onlyfans: LEGACY_COLLECTIONS.onlyfans.titles,
   cn: LEGACY_COLLECTIONS.cn.titles,
-  jav: LEGACY_COLLECTIONS.jav.titles
+  jav: LEGACY_COLLECTIONS.jav.titles,
+  aidrama: {
+    en: '[Pack] AI Adult Short Drama Collection / HD Bundle',
+    zh: 'AI 成人短剧合集｜热门剧情短片全整理',
+    'zh-hant': 'AI 成人短劇合集｜熱門劇情短片全整理',
+    ja: 'AI成人ショートドラマ配布まとめ｜人気作品パック',
+    ko: 'AI 성인 숏드라마 모음｜인기 작품 패키지'
+  }
 };
 
 const imageExtensions = new Set(['.jpg', '.jpeg', '.png', '.webp']);
@@ -124,6 +131,7 @@ function findImages(dir, depth = 0, images = []) {
 function candidateScore(filePath) {
   const name = path.basename(filePath).toLowerCase();
   let score = 0;
+  if (/^cover\.(jpg|jpeg|png|webp)$/.test(name)) score += 200;
   if (/cover|preview|thumb|缩略图/.test(name)) score += 100;
   if (/grid|contact|sample/.test(name)) score -= 20;
   if (/\.mp4\.jpg$/.test(name)) score -= 8;
@@ -131,12 +139,35 @@ function candidateScore(filePath) {
 }
 
 function makeSquareThumbnail(sourcePath, outputPath) {
+  const infoResult = spawnSync('sips', ['-g', 'pixelHeight', '-g', 'pixelWidth', sourcePath], { encoding: 'utf8' });
+  if (infoResult.status !== 0) return false;
+
+  const heightMatch = infoResult.stdout.match(/pixelHeight:\s*(\d+)/);
+  const widthMatch = infoResult.stdout.match(/pixelWidth:\s*(\d+)/);
+  if (!heightMatch || !widthMatch) return false;
+
+  const height = parseInt(heightMatch[1], 10);
+  const width = parseInt(widthMatch[1], 10);
+
+  const resampleArg = width > height ? '--resampleHeight' : '--resampleWidth';
+
   const result = spawnSync('sips', [
+    resampleArg, String(THUMB_SIZE),
     '--cropToHeightWidth', String(THUMB_SIZE), String(THUMB_SIZE),
     '-s', 'format', 'jpeg', '-s', 'formatOptions', '75',
     sourcePath, '--out', outputPath
   ], { encoding: 'utf8' });
   return result.status === 0 && fs.existsSync(outputPath);
+}
+
+function makeFolderThumbnail(folder, id) {
+  const thumbFile = `${id}.jpg`;
+  const thumbPath = path.join(THUMB_DIR, thumbFile);
+  if (!fs.existsSync(thumbPath)) {
+    const images = findImages(folder).sort((a, b) => candidateScore(b) - candidateScore(a) || a.localeCompare(b));
+    if (images[0]) makeSquareThumbnail(images[0], thumbPath);
+  }
+  return fs.existsSync(thumbPath) ? `thumbnails/${thumbFile}` : '';
 }
 
 function isAsciiNameToken(value) {
@@ -197,13 +228,9 @@ function main() {
     const original = normalizeTitle(info.folder_name || path.basename(folder));
     const titles = buildTitleSet(original, category.key);
     const id = crypto.createHash('sha1').update(info.share_url).digest('hex').slice(0, 16);
-    const thumbFile = `${id}.jpg`;
-    const thumbPath = path.join(THUMB_DIR, thumbFile);
-
-    if (!fs.existsSync(thumbPath)) {
-      const images = findImages(folder).sort((a, b) => candidateScore(b) - candidateScore(a) || a.localeCompare(b));
-      if (images[0] && makeSquareThumbnail(images[0], thumbPath)) thumbnailCount++;
-    }
+    const beforeThumb = fs.existsSync(path.join(THUMB_DIR, `${id}.jpg`));
+    const thumb = makeFolderThumbnail(folder, id);
+    if (!beforeThumb && thumb) thumbnailCount++;
 
     resources.push({
       id,
@@ -214,7 +241,7 @@ function main() {
       categoryOrder: category.order,
       createdAt: getInfoTimestamp(info, infoPath),
       encodedUrl: obfuscateUrl(info.share_url),
-      thumb: fs.existsSync(thumbPath) ? `thumbnails/${thumbFile}` : '',
+      thumb,
       icon: category.icon,
       placeholder: id.slice(-2).toUpperCase(),
       hue: Number.parseInt(id.slice(0, 6), 16) % 360
@@ -230,6 +257,9 @@ function main() {
     if (!preferredShare) continue;
     const id = crypto.createHash('sha1').update(preferredShare.share_url).digest('hex').slice(0, 16);
     const titles = COLLECTION_TITLES[category.key];
+    if (!titles) continue;
+    const folder = path.join(SOURCE_ROOT, categoryName);
+    const collectionThumb = legacyCollection?.thumbnail || makeFolderThumbnail(folder, id) || category.fallback;
     resources.push({
       id,
       original: titles.en,
@@ -239,7 +269,7 @@ function main() {
       categoryOrder: category.order,
       createdAt: infoPath && fs.existsSync(infoPath) ? getInfoTimestamp(info || {}, infoPath) : 0,
       encodedUrl: obfuscateUrl(preferredShare.share_url),
-      thumb: legacyCollection?.thumbnail || category.fallback,
+      thumb: collectionThumb,
       icon: legacyCollection?.status_icon || category.icon,
       hue: Number.parseInt(id.slice(0, 6), 16) % 360,
       isCollection: true
