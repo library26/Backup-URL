@@ -451,9 +451,9 @@ const CATALOG_RESOURCES = Array.isArray(window.DEMO_RESOURCES) && window.DEMO_RE
   : RESOURCES;
 const PAGE_SIZE = 48;
 const CHANNEL_LINKS = {
-  telegramDefault: '=YjMsJXdwV3ajJ2Ll1mL09yL6MHc0RHa',
-  telegramZh: 'iVHalJXYoN3ahB3apB3Ll1mL09yL6MHc0RHa',
-  discord: '=czcmN3YVJmVhR2LndmLkJ3bjNXak9yL6MHc0RHa'
+  telegramDefault: 'https://t.me/bckupurl26',
+  telegramZh: 'https://t.me/pikpaksharehub',
+  discord: 'https://discord.gg/daVbUcsfs7'
 };
 
 let currentLang = 'zh';
@@ -499,7 +499,7 @@ function escapeHtml(value) {
 
 function decodeUrl(encodedUrl) {
   try {
-    return atob(encodedUrl.split('').reverse().join(''));
+    return atob(encodedUrl);
   } catch {
     return '#';
   }
@@ -638,8 +638,8 @@ function setLanguage(lang) {
   document.getElementById('ui-dc-sub').textContent = t.dcSub;
   document.getElementById('ui-section-title').textContent = t.sectionTitle;
   document.getElementById('searchInput').placeholder = t.searchPlaceholder;
-  document.getElementById('tgBanner').href = decodeUrl(currentLang === 'zh' ? CHANNEL_LINKS.telegramZh : CHANNEL_LINKS.telegramDefault);
-  document.getElementById('dcBanner').href = decodeUrl(CHANNEL_LINKS.discord);
+  document.getElementById('tgBanner').href = currentLang === 'zh' ? CHANNEL_LINKS.telegramZh : CHANNEL_LINKS.telegramDefault;
+  document.getElementById('dcBanner').href = CHANNEL_LINKS.discord;
   document.documentElement.lang = currentLang;
 
   document.querySelectorAll('.lang-link').forEach(el => {
