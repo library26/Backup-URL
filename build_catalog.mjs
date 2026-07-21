@@ -89,7 +89,14 @@ function normalizeTitle(name) {
 }
 
 function obfuscateUrl(url) {
-  return Buffer.from(url, 'utf8').toString('base64');
+  const b64 = Buffer.from(url, 'utf8').toString('base64');
+  return b64.split('').reverse().join('');
+}
+
+function obfuscatePayload(value) {
+  const json = JSON.stringify(value);
+  const b64 = Buffer.from(json, 'utf8').toString('base64');
+  return b64.split('').reverse().join('');
 }
 
 function getInfoTimestamp(info, infoPath) {
@@ -286,7 +293,18 @@ function main() {
   }
 
   resources.sort((a, b) => a.categoryOrder - b.categoryOrder || Number(Boolean(b.isCollection)) - Number(Boolean(a.isCollection)) || a.original.localeCompare(b.original, 'zh-Hans-CN'));
-  const output = `window.DEMO_RESOURCES = ${JSON.stringify(resources)};\n`;
+  const payload = obfuscatePayload(resources);
+  const output = `(function () {
+  function decodePayload(reversed) {
+    var b64 = reversed.split('').reverse().join('');
+    var binary = atob(b64);
+    var bytes = new Uint8Array(binary.length);
+    for (var i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+    return new TextDecoder('utf-8').decode(bytes);
+  }
+  window.DEMO_RESOURCES = JSON.parse(decodePayload('${payload}'));
+})();
+`;
   fs.writeFileSync(OUTPUT_FILE, output);
   console.log(`已生成 ${resources.length} 条分享数据；本次新增 ${thumbnailCount} 张方形缩略图。`);
 }
