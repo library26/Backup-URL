@@ -10,6 +10,7 @@
 <meta name="theme-color" content="#0b0c10">
 <link rel="icon" type="image/png" sizes="48x48" href="favicon-48.png">
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
 <link rel="canonical" href="https://library26.github.io/Backup-URL/">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://library26.github.io/Backup-URL/">
@@ -57,18 +58,15 @@
   .header { display: flex; flex-direction: column; align-items: center; margin-bottom: 20px; text-align: center; }
   .avatar {
     width: 72px; height: 72px; border-radius: 50%;
-    background: linear-gradient(135deg, #1b1d24, #0d0e12);
     box-shadow: 0 0 25px rgba(219, 112, 147, 0.35);
     border: 3px solid rgba(255, 255, 255, 0.95);
-    display: flex; align-items: center; justify-content: center;
-    margin-bottom: 10px; font-weight: 900; font-size: 22px;
-    background-image: var(--accent-grad); -webkit-background-clip: text; background-clip: text; color: transparent;
+    margin-bottom: 10px; object-fit: cover; display: block;
   }
   .title { font-size: 19px; font-weight: 800; letter-spacing: -0.3px; color: #fff; }
   .bio { font-size: 11.5px; color: var(--text-muted); margin-top: 5px; max-width: 320px; line-height: 1.5; }
 
-  
-  .focus-banners { display: flex; flex-direction: column; gap: 10px; margin: 18px 0 20px; width: 100%; }
+
+  .focus-banners { display: flex; flex-direction: column; gap: 10px; margin: 18px 0 14px; width: 100%; }
   .focus-banner {
     display: flex; align-items: center; padding: 14px 18px; border-radius: 12px;
     text-decoration: none; color: #ffffff; transition: transform 0.15s ease, box-shadow 0.15s ease;
@@ -77,6 +75,7 @@
   .tg-banner { background: linear-gradient(135deg, #24A1DE, #1a88bd); box-shadow: 0 4px 14px rgba(36, 161, 222, 0.2); }
   .dc-banner { background: linear-gradient(135deg, #5865F2, #4752c4); box-shadow: 0 4px 14px rgba(88, 101, 242, 0.2); }
   .focus-banner:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
+  .focus-banner:active { transform: scale(0.985); }
   .banner-icon {
     font-size: 16px; font-weight: 900; margin-right: 12px; width: 28px; height: 28px;
     background: rgba(255, 255, 255, 0.2); border-radius: 50%;
@@ -88,11 +87,24 @@
   .banner-arrow { font-size: 18px; opacity: 0.85; transition: transform 0.2s; }
   .focus-banner:hover .banner-arrow { transform: translateX(3px); }
 
-  
+  /* v6: sticky search + chips */
+  .tools-sticky {
+    position: sticky; top: 0; z-index: 60;
+    margin: 0 -14px; padding: 8px 14px 6px;
+    background: rgba(11, 12, 16, 0.82);
+    backdrop-filter: blur(22px); -webkit-backdrop-filter: blur(22px);
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+  .tools-sticky.stuck {
+    border-bottom-color: rgba(255, 255, 255, 0.07);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
+  }
+
   .search-bar {
     display: flex; align-items: center; gap: 8px;
     background: var(--card-bg); border: 1px solid var(--card-border);
-    border-radius: 12px; padding: 10px 14px; margin-bottom: 12px;
+    border-radius: 12px; padding: 10px 14px; margin-bottom: 10px;
     backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
     transition: border-color 0.2s;
   }
@@ -110,10 +122,13 @@
   }
   .search-bar.has-text .search-clear { display: flex; }
 
-  
+  /* v6: chip row with edge fade */
+  .chip-fade { position: relative; }
   .chip-row {
-    display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 14px;
+    display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 8px;
     scrollbar-width: none; -ms-overflow-style: none;
+    -webkit-mask-image: linear-gradient(to right, #000 88%, transparent 100%);
+    mask-image: linear-gradient(to right, #000 88%, transparent 100%);
   }
   .chip-row::-webkit-scrollbar { display: none; }
   .cat-chip {
@@ -122,6 +137,7 @@
     background: rgba(255,255,255,0.04); border: 1px solid var(--card-border);
     cursor: pointer; transition: all 0.15s ease; -webkit-tap-highlight-color: transparent;
   }
+  .cat-chip:active { transform: scale(0.95); }
   .cat-chip.active {
     color: #fff; border-color: transparent;
     background: var(--accent-grad);
@@ -136,6 +152,11 @@
   .section-group-title {
     width: 100%; margin: 4px 0 0; padding: 4px 2px 0;
     color: rgba(255,255,255,0.78); text-transform: none; letter-spacing: 0;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .section-group-title::after {
+    content: ''; flex: 1; height: 1px;
+    background: linear-gradient(to right, rgba(255,255,255,0.12), transparent);
   }
   .section-group-title strong { font-size: 12px; color: #fff; }
   .section-group-title span { font-size: 10px; opacity: 0.72; font-weight: 700; }
@@ -147,10 +168,16 @@
     display: flex; align-items: center; justify-content: space-between; text-decoration: none;
     padding: 10px 14px 10px 10px; background: var(--card-bg); border: 1px solid var(--card-border);
     border-radius: 12px; box-shadow: var(--shadow); backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px); transition: all 0.2s ease; min-height: 56px;
+    -webkit-backdrop-filter: blur(20px); transition: transform 0.15s ease, border-color 0.2s ease, background 0.2s ease;
+    min-height: 56px; -webkit-tap-highlight-color: transparent;
   }
   .resource-card:hover { transform: translateY(-2px); border-color: var(--card-border-hover); }
+  .resource-card:active { transform: scale(0.985); background: rgba(32, 32, 40, 0.85); }
   .resource-card.hidden { display: none; }
+  @media (hover: none) {
+    .resource-card:hover { transform: none; }
+    .focus-banner:hover { transform: none; }
+  }
 
   .preview-box {
     width: 42px; height: 42px; border-radius: 8px; overflow: hidden;
@@ -167,13 +194,27 @@
       #25242d;
   }
   .card-body { flex-grow: 1; min-width: 0; }
-  
+
   .card-title {
     font-size: 13px; font-weight: 700; color: #fff; display: -webkit-box;
     -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
     text-overflow: ellipsis; line-height: 1.4; padding-right: 6px; word-break: break-all;
   }
-  .status-icon { font-size: 14px; color: var(--text-muted); flex-shrink: 0; margin-left: 6px; }
+  .card-right { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; margin-left: 6px; }
+  .status-icon { font-size: 14px; color: var(--text-muted); }
+
+  /* v6: metadata badge + NEW pill */
+  .meta-badge {
+    font-size: 9.5px; font-weight: 700; letter-spacing: 0.2px; white-space: nowrap;
+    color: rgba(255,255,255,0.62); background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.07); border-radius: 6px; padding: 2px 6px;
+    font-variant-numeric: tabular-nums;
+  }
+  .new-pill {
+    font-size: 8.5px; font-weight: 900; letter-spacing: 0.6px; color: #fff;
+    background: var(--accent-grad); border-radius: 5px; padding: 2px 5px;
+    box-shadow: 0 2px 8px rgba(255, 45, 85, 0.35);
+  }
 
   .empty-state {
     display: none; text-align: center; padding: 34px 10px; color: var(--text-muted); font-size: 12.5px;
@@ -192,13 +233,25 @@
   .lang-link { cursor: pointer; margin: 0 4px; text-decoration: underline; }
   .lang-link.active { color: #fff; font-weight: 800; text-decoration: none; }
 
-  
+  /* v6: back to top */
+  .back-top {
+    position: fixed; right: 18px; bottom: 22px; z-index: 70;
+    width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--card-border);
+    background: rgba(22, 22, 28, 0.9); color: #fff; font-size: 17px; cursor: pointer;
+    backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.4);
+    opacity: 0; pointer-events: none; transform: translateY(8px);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+  }
+  .back-top.show { opacity: 1; pointer-events: auto; transform: translateY(0); }
+
   @media (min-width: 768px) {
     .container { max-width: 960px; padding: 40px 24px; }
+    .tools-sticky { margin: 0 -24px; padding: 10px 24px 8px; }
     .focus-banners { flex-direction: row; gap: 20px; }
     .focus-banner { flex: 1; margin: 0; }
-    .search-bar { max-width: 560px; margin: 0 auto 20px auto; }
-    .chip-row { justify-content: center; flex-wrap: wrap; overflow-x: visible; padding-bottom: 0; margin-bottom: 24px; }
+    .search-bar { max-width: 560px; margin: 0 auto 12px auto; }
+    .chip-row { justify-content: center; flex-wrap: wrap; overflow-x: visible; padding-bottom: 0; margin-bottom: 16px; -webkit-mask-image: none; mask-image: none; }
     .cat-chip { margin-bottom: 8px; }
     .list-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 16px; }
     .section-group-title { grid-column: 1 / -1; margin-top: 8px; }
@@ -210,8 +263,6 @@
   }
 </style>
 
-<link rel="icon" type="image/png" sizes="48x48" href="favicon-48.png">
-<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
 <meta name="application-name" content="PikPak">
 <meta property="og:site_name" content="PikPak">
 <script type="application/ld+json">
@@ -227,12 +278,12 @@
 <div class="container">
 
   <header class="header">
-    <img src="pikpaklogo.png" alt="Avatar" class="avatar">
+    <img src="pikpaklogo.png" alt="Avatar" class="avatar" width="72" height="72">
     <h1 class="title" id="ui-title">PikPak 资源合集入口</h1>
     <p class="bio" id="ui-bio">PikPak 热门分享与网盘资源导航，建议收藏本页防失联。</p>
   </header>
 
-  
+
   <div class="focus-banners">
     <a href="#" class="focus-banner tg-banner" id="tgBanner" target="_blank" rel="noopener noreferrer">
       <div class="banner-icon">T</div>
@@ -252,26 +303,221 @@
     </a>
   </div>
 
-  
-  <div class="search-bar" id="searchBar">
-    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-    <input type="text" id="searchInput" placeholder="搜索资源标题或创作者…">
-    <button class="search-clear" id="searchClear">✕</button>
-  </div>
 
-  
-  <div class="chip-row" id="chipRow"></div>
+  <div class="tools-sticky" id="toolsSticky">
+    <div class="search-bar" id="searchBar">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" id="searchInput" placeholder="搜索资源标题或创作者…">
+      <button class="search-clear" id="searchClear">✕</button>
+    </div>
+    <div class="chip-fade">
+      <div class="chip-row" id="chipRow"></div>
+    </div>
+  </div>
 
   <div class="section-title">
     <span id="ui-section-title">资源目录</span>
     <span class="result-count" id="resultCount"></span>
   </div>
 
-  <div class="list-container" id="resourceList"></div>
+  <div class="list-container" id="resourceList"><div class="section-group-title"><strong>热门资源</strong></div>
+      <a href="#" data-enc-url="==gMv9kS3ZTbzk0XxNnMz8kTWZmdBNmdBh3TW9ycv02bj5yahB3apBXet9yL6MHc0RHa" class="resource-card" rel="noopener">
+      <div class="preview-box"><img src="thumbnails/763b11ac5f40d8ce.jpg" class="preview-img" alt="🔥 最新最火的 MyFans 付费内容打包" loading="lazy" width="42" height="42"></div>
+      <div class="card-body"><div class="card-title">🔥 最新最火的 MyFans 付费内容打包</div></div>
+    </a>
+      <a href="#" data-enc-url="==gMvNWOEpmZQV0XSNmRjtUamdVODd1RWh3TW9ycv02bj5yahB3apBXet9yL6MHc0RHa" class="resource-card" rel="noopener">
+      <div class="preview-box"><img src="thumbnails/6ec568228f06d731.jpg" class="preview-img" alt="🔥 OnlyFans·Fansly 欧美付费内容打包" loading="lazy" width="42" height="42"></div>
+      <div class="card-body"><div class="card-title">🔥 OnlyFans·Fansly 欧美付费内容打包</div></div>
+    </a>
+      <a href="#" data-enc-url="==gMvh1QNVEMmRzMSJzbfZ3aIJXY1c1RWh3TW9ycv02bj5yahB3apBXet9yL6MHc0RHa" class="resource-card" rel="noopener">
+      <div class="preview-box"><img src="thumbnails/a8160ad51b93d8e5.jpg" class="preview-img" alt="日本 FC2 素人超大合集！😈 各种玩法全收录" loading="lazy" width="42" height="42"></div>
+      <div class="card-body"><div class="card-title">日本 FC2 素人超大合集！😈 各种玩法全收录</div></div>
+    </a>
+      <a href="#" data-enc-url="==gMvJzbiVzVyUzMRNEMXxWb3UkT3lTQwZ3TW9ycv02bj5yahB3apBXet9yL6MHc0RHa" class="resource-card" rel="noopener">
+      <div class="preview-box"><img src="thumbnails/65d5a9a39d8c03d9.jpg" class="preview-img" alt="国产顶级资源合集！约炮+探花+福利姬😈" loading="lazy" width="42" height="42"></div>
+      <div class="card-body"><div class="card-title">国产顶级资源合集！约炮+探花+福利姬😈</div></div>
+    </a>
+      <a href="#" data-enc-url="==gMvFXRmBzM3s2YxUjMB1yNzo0XOFmaLF3TW9ycv02bj5yahB3apBXet9yL6MHc0RHa" class="resource-card" rel="noopener">
+      <div class="preview-box"><img src="thumbnails/6c7002e409958113.jpg" class="preview-img" alt="Cosplay 同人写真超大合集！😈 多套原图打包" loading="lazy" width="42" height="42"></div>
+      <div class="card-body"><div class="card-title">Cosplay 同人写真超大合集！😈 多套原图打包</div></div>
+    </a>
+      <a href="#" data-enc-url="==gMvdWaj5EUGhHMTVnY5cTYKplSKd1RWh3TW9ycv02bj5yahB3apBXet9yL6MHc0RHa" class="resource-card" rel="noopener">
+      <div class="preview-box"><img src="thumbnails/c9a7ff0d3fa57b7c.jpg" class="preview-img" alt="华语独立名优精选合集！😈 顶级华人创作者" loading="lazy" width="42" height="42"></div>
+      <div class="card-body"><div class="card-title">华语独立名优精选合集！😈 顶级华人创作者</div></div>
+    </a>
+      <a href="#" data-enc-url="==gMvh2UrxEOat0NJtEbftWU5kEZ50UVCh3TW9ycv02bj5yahB3apBXet9yL6MHc0RHa" class="resource-card" rel="noopener">
+      <div class="preview-box"><img src="thumbnails/39f467714b83d380.jpg" class="preview-img" alt="🇯🇵 日本AV大合集（素人・无码・中出・乱交等）" loading="lazy" width="42" height="42"></div>
+      <div class="card-body"><div class="card-title">🇯🇵 日本AV大合集（素人・无码・中出・乱交等）</div></div>
+    </a>
+      <a href="#" data-enc-url="==gMvJkdqhVLXR1UqV0REhETnhFSfRFOtk3TW9ycv02bj5yahB3apBXet9yL6MHc0RHa" class="resource-card" rel="noopener">
+      <div class="preview-box"><img src="thumbnails/4d529e1fb72ef910.jpg" class="preview-img" alt="AI 成人短剧合集｜热门剧情短片全整理" loading="lazy" width="42" height="42"></div>
+      <div class="card-body"><div class="card-title">AI 成人短剧合集｜热门剧情短片全整理</div></div>
+    </a>
+      <div class="section-group-title"><strong>MyFans/CandFans</strong><span>最新整理</span></div>
+      <a href="#" data-enc-url="==gMvxUMx4WUGhHMTVnY5cTYKpVYY1WOYh3TW9ycv02bj5yahB3apBXet9yL6MHc0RHa" class="resource-card" rel="noopener">
+      <div class="preview-box"><img src="thumbnails/c4e96a2c83fbc67b.jpg" class="preview-img" alt="[myfans]sleepyboy_x(yuno)" loading="lazy" width="42" height="42"></div>
+      <div class="card-body"><div class="card-title">[myfans]sleepyboy_x(yuno)</div></div>
+    </a>
+      <a href="#" data-enc-url="==gMvp3YL1yR6xEa51WVDRXW4UFdyxWOYh3TW9ycv02bj5yahB3apBXet9yL6MHc0RHa" class="resource-card" rel="noopener">
+      <div class="preview-box"><img src="thumbnails/435eaae1c75558dc.jpg" class="preview-img" alt="[Fantia] 🇯🇵 @miuchoco_mew22 [13.6G 105V]" loading="lazy" width="42" height="42"></div>
+      <div class="card-body"><div class="card-title">[Fantia] 🇯🇵 @miuchoco_mew22 [13.6G 105V]</div></div>
+    </a>
+      <a href="#" data-enc-url="==gMvRTbxcVMrRGaQJHOPlEa6Z3SPdEOYh3TW9ycv02bj5yahB3apBXet9yL6MHc0RHa" class="resource-card" rel="noopener">
+      <div class="preview-box"><img src="thumbnails/72b72b7a717bfd08.jpg" class="preview-img" alt="[myfans] sano_xxxxxx" loading="lazy" width="42" height="42"></div>
+      <div class="card-body"><div class="card-title">[myfans] sano_xxxxxx</div></div>
+    </a>
+      <a href="#" data-enc-url="==gMvlUeitUODdGRtEGNz1GbZNWMGVEOYh3TW9ycv02bj5yahB3apBXet9yL6MHc0RHa" class="resource-card" rel="noopener">
+      <div class="preview-box"><img src="thumbnails/39419b0e5c4fda63.jpg" class="preview-img" alt="ambicharu8" loading="lazy" width="42" height="42"></div>
+      <div class="card-body"><div class="card-title">ambicharu8</div></div>
+    </a>
+      <a href="#" data-enc-url="==gMvVncrh0a4AFS45UTiZjW3YFehREOYh3TW9ycv02bj5yahB3apBXet9yL6MHc0RHa" class="resource-card" rel="noopener">
+      <div class="preview-box"><img src="thumbnails/18c3405254afdff4.jpg" class="preview-img" alt="[myfans] raychan0909 れー" loading="lazy" width="42" height="42"></div>
+      <div class="card-body"><div class="card-title">[myfans] raychan0909 れー</div></div>
+    </a>
+      <a href="#" data-enc-url="==gMvZnSod3YyIncn50TCREU0gkUaJEOYh3TW9ycv02bj5yahB3apBXet9yL6MHc0RHa" class="resource-card" rel="noopener">
+      <div class="preview-box"><img src="thumbnails/fb88b2191c8429a7.jpg" class="preview-img" alt="[myfans]ne__6i" loading="lazy" width="42" height="42"></div>
+      <div class="card-body"><div class="card-title">[myfans]ne__6i</div></div>
+    </a>
+      <a href="#" data-enc-url="==gMvdmbmhlVV1ybuBzRwJVW1Z0T2FEOYh3TW9ycv02bj5yahB3apBXet9yL6MHc0RHa" class="resource-card" rel="noopener">
+      <div class="preview-box"><img src="thumbnails/ad4bccfc9b25da79.jpg" class="preview-img" alt="[myfans] Ycancan" loading="lazy" width="42" height="42"></div>
+      <div class="card-body"><div class="card-title">[myfans] Ycancan</div></div>
+    </a>
+      <a href="#" data-enc-url="==gMvJmUlpnR6xEa51WVDRXW4U1TIFEOYh3TW9ycv02bj5yahB3apBXet9yL6MHc0RHa" class="resource-card" rel="noopener">
+      <div class="preview-box"><img src="thumbnails/24b772a88575374e.jpg" class="preview-img" alt="[Myfans] 072q" loading="lazy" width="42" height="42"></div>
+      <div class="card-body"><div class="card-title">[Myfans] 072q</div></div>
+    </a>
+      <a href="#" data-enc-url="==gMvxUTht2ZQV0XSNmRjtUamdVeflDOYh3TW9ycv02bj5yahB3apBXet9yL6MHc0RHa" class="resource-card" rel="noopener">
+      <div class="preview-box"><img src="thumbnails/0250b7535c8c8694.jpg" class="preview-img" alt="[myfans] retsu_dao" loading="lazy" width="42" height="42"></div>
+      <div class="card-body"><div class="card-title">[myfans] retsu_dao</div></div>
+    </a>
+      <a href="#" data-enc-url="==gMvNDRrh0a4AFS45UTiZjW3YFa1hDOYh3TW9ycv02bj5yahB3apBXet9yL6MHc0RHa" class="resource-card" rel="noopener">
+      <div class="preview-box"><img src="thumbnails/8729d62d86c07026.jpg" class="preview-img" alt="[myfans]secret_japan" loading="lazy" width="42" height="42"></div>
+      <div class="card-body"><div class="card-title">[myfans]secret_japan</div></div>
+    </a>
+      <a href="#" data-enc-url="==gMvJkMylUMmRzMSJzbfZ3aIJnSjBDOYh3TW9ycv02bj5yahB3apBXet9yL6MHc0RHa" class="resource-card" rel="noopener">
+      <div class="preview-box"><img src="thumbnails/c80ab2a2f9f03579.jpg" class="preview-img" alt="[myfans]女性を覗く - 여성을 몰래 훔쳐보다" loading="lazy" width="42" height="42"></div>
+      <div class="card-body"><div class="card-title">[myfans]女性を覗く - 여성을 몰래 훔쳐보다</div></div>
+    </a>
+      <a href="#" data-enc-url="==gMvF1QwlUMmRzMSJzbfZ3aIJ3Sf52NYh3TW9ycv02bj5yahB3apBXet9yL6MHc0RHa" class="resource-card" rel="noopener">
+      <div class="preview-box"><img src="thumbnails/a41c26a11806bfac.jpg" class="preview-img" alt="[candfans, myfans] raikun325" loading="lazy" width="42" height="42"></div>
+      <div class="card-body"><div class="card-title">[candfans, myfans] raikun325</div></div>
+    </a>
+      <a href="#" data-enc-url="==gMvBHWVt2ZQV0XSNmRjtUamdVLF12NYh3TW9ycv02bj5yahB3apBXet9yL6MHc0RHa" class="resource-card" rel="noopener">
+      <div class="preview-box"><img src="thumbnails/de6daf95ee9b1296.jpg" class="preview-img" alt="[myfans]美尻ちゃんねる🍑🔞 @2bisirifan" loading="lazy" width="42" height="42"></div>
+      <div class="card-body"><div class="card-title">[myfans]美尻ちゃんねる🍑🔞 @2bisirifan</div></div>
+    </a>
+      <a href="#" data-enc-url="==gMvlTRX10UxNHbTRGVw1Ga2lWYzU2NYh3TW9ycv02bj5yahB3apBXet9yL6MHc0RHa" class="resource-card" rel="noopener">
+      <div class="preview-box"><img src="thumbnails/abe3080af5da63b1.jpg" class="preview-img" alt="[myfans] Tokyomeltdown" loading="lazy" width="42" height="42"></div>
+      <div class="card-body"><div class="card-title">[myfans] Tokyomeltdown</div></div>
+    </a>
+      <a href="#" data-enc-url="==gMvBjQX10UxNHbTRGVw1Ga2lGVNR2NYh3TW9ycv02bj5yahB3apBXet9yL6MHc0RHa" class="resource-card" rel="noopener">
+      <div class="preview-box"><img src="thumbnails/119eed6730c569ce.jpg" class="preview-img" alt="[myfans]素人肉便器ガチ堕ちch kemonokai" loading="lazy" width="42" height="42"></div>
+      <div class="card-body"><div class="card-title">[myfans]素人肉便器ガチ堕ちch kemonokai</div></div>
+    </a>
+      <a href="#" data-enc-url="==gMvdURrp0a3dVZOJkcalVN5ZjRpN2NYh3TW9ycv02bj5yahB3apBXet9yL6MHc0RHa" class="resource-card" rel="noopener">
+      <div class="preview-box"><img src="thumbnails/ee851c082c1fb70f.jpg" class="preview-img" alt="[myfans] secret_japan (new)" loading="lazy" width="42" height="42"></div>
+      <div class="card-body"><div class="card-title">[myfans] secret_japan (new)</div></div>
+    </a>
+      <a href="#" data-enc-url="==gMvlWbOpnR6xEa51WVDRXW4UFdVp1NYh3TW9ycv02bj5yahB3apBXet9yL6MHc0RHa" class="resource-card" rel="noopener">
+      <div class="preview-box"><img src="thumbnails/6548873df91db3b4.jpg" class="preview-img" alt="[myfans] vzrym9 --Json37344517 ジェイ" loading="lazy" width="42" height="42"></div>
+      <div class="card-body"><div class="card-title">[myfans] vzrym9 --Json37344517 ジェイ</div></div>
+    </a>
+      <a href="#" data-enc-url="==gMvVzN3B1U2M1NmRUVmhXSJR2Nyl1NYh3TW9ycv02bj5yahB3apBXet9yL6MHc0RHa" class="resource-card" rel="noopener">
+      <div class="preview-box"><img src="thumbnails/05dbf88a9b9682aa.jpg" class="preview-img" alt="[myfans]ASMR [onlyfans] dorei1515" loading="lazy" width="42" height="42"></div>
+      <div class="card-body"><div class="card-title">[myfans]ASMR [onlyfans] dorei1515</div></div>
+    </a>
+      <a href="#" data-enc-url="==gMvNmamh0a4AFS45UTiZjW3Y1aTh1NYh3TW9ycv02bj5yahB3apBXet9yL6MHc0RHa" class="resource-card" rel="noopener">
+      <div class="preview-box"><img src="thumbnails/3c5c9d50a6361ca0.jpg" class="preview-img" alt="[myfans]DKの日常 DKnoNICHIJOU" loading="lazy" width="42" height="42"></div>
+      <div class="card-body"><div class="card-title">[myfans]DKの日常 DKnoNICHIJOU</div></div>
+    </a>
+      <a href="#" data-enc-url="==gMvR3Smh0a4AFS45UTiZjW3YFaxc1NYh3TW9ycv02bj5yahB3apBXet9yL6MHc0RHa" class="resource-card" rel="noopener">
+      <div class="preview-box"><img src="thumbnails/484a14db56127c26.jpg" class="preview-img" alt="[myfans]素人ホイホイ power" loading="lazy" width="42" height="42"></div>
+      <div class="card-body"><div class="card-title">[myfans]素人ホイホイ power</div></div>
+    </a>
+      <a href="#" data-enc-url="==gMvpFRkp0a3dVZOJkcalVN5ZTdPZ1NYh3TW9ycv02bj5yahB3apBXet9yL6MHc0RHa" class="resource-card" rel="noopener">
+      <div class="preview-box"><img src="thumbnails/aa2abe257035ec59.jpg" class="preview-img" alt="[myfans]hentai-tv" loading="lazy" width="42" height="42"></div>
+      <div class="card-body"><div class="card-title">[myfans]hentai-tv</div></div>
+    </a>
+      <a href="#" data-enc-url="==gMvdDRmh0a4AFS45UTiZjW3YVQoV1NYh3TW9ycv02bj5yahB3apBXet9yL6MHc0RHa" class="resource-card" rel="noopener">
+      <div class="preview-box"><img src="thumbnails/37d25a8217ef7a57.jpg" class="preview-img" alt="[myfans]ASMR --sui_nanono" loading="lazy" width="42" height="42"></div>
+      <div class="card-body"><div class="card-title">[myfans]ASMR --sui_nanono</div></div>
+    </a>
+      <a href="#" data-enc-url="==gMv90NUd3YyIncn50TCREU0gkSJR1NYh3TW9ycv02bj5yahB3apBXet9yL6MHc0RHa" class="resource-card" rel="noopener">
+      <div class="preview-box"><img src="thumbnails/d3c55d106df3a23d.jpg" class="preview-img" alt="[fantia]ASMR --shinonomemeto東雲めと" loading="lazy" width="42" height="42"></div>
+      <div class="card-body"><div class="card-title">[fantia]ASMR --shinonomemeto東雲めと</div></div>
+    </a>
+      <a href="#" data-enc-url="==gMvJjU2IkSzZHc5cjbBZTRjFGWzJ1NYh3TW9ycv02bj5yahB3apBXet9yL6MHc0RHa" class="resource-card" rel="noopener">
+      <div class="preview-box"><img src="thumbnails/db04520229d61ba2.jpg" class="preview-img" alt="[myfans]SNAPTOKYO Snap_Tokyo" loading="lazy" width="42" height="42"></div>
+      <div class="card-body"><div class="card-title">[myfans]SNAPTOKYO Snap_Tokyo</div></div>
+    </a>
+      <a href="#" data-enc-url="==gMvV0cWtUODdGRtEGNz1GbZN2bL90NYh3TW9ycv02bj5yahB3apBXet9yL6MHc0RHa" class="resource-card" rel="noopener">
+      <div class="preview-box"><img src="thumbnails/7726b8e4398552c9.jpg" class="preview-img" alt="[myfans] fanzazz --19ak_z 裏垢男子の日常" loading="lazy" width="42" height="42"></div>
+      <div class="card-body"><div class="card-title">[myfans] fanzazz --19ak_z 裏垢男子の日常</div></div>
+    </a>
+      <a href="#" data-enc-url="==gMvdHRlh0a4AFS45UTiZjW3YlTl50NYh3TW9ycv02bj5yahB3apBXet9yL6MHc0RHa" class="resource-card" rel="noopener">
+      <div class="preview-box"><img src="thumbnails/da0ae50a832020f2.jpg" class="preview-img" alt="[myfans] yn_3,ai_osananajimi" loading="lazy" width="42" height="42"></div>
+      <div class="card-body"><div class="card-title">[myfans] yn_3,ai_osananajimi</div></div>
+    </a>
+      <a href="#" data-enc-url="==gMvVTYip0a3dVZOJkcalVN5ZTaXx0NYh3TW9ycv02bj5yahB3apBXet9yL6MHc0RHa" class="resource-card" rel="noopener">
+      <div class="preview-box"><img src="thumbnails/ad1f93bef58e9c54.jpg" class="preview-img" alt="[myfans] rokumaruda @桜とろくまる" loading="lazy" width="42" height="42"></div>
+      <div class="card-body"><div class="card-title">[myfans] rokumaruda @桜とろくまる</div></div>
+    </a>
+      <a href="#" data-enc-url="==gMvdnTQ10UxNHbTRGVw1Ga2lmbPZ0NYh3TW9ycv02bj5yahB3apBXet9yL6MHc0RHa" class="resource-card" rel="noopener">
+      <div class="preview-box"><img src="thumbnails/1274fb8d88362194.jpg" class="preview-img" alt="[myfans]deruデるking --derukin" loading="lazy" width="42" height="42"></div>
+      <div class="card-body"><div class="card-title">[myfans]deruデるking --derukin</div></div>
+    </a>
+      <a href="#" data-enc-url="==gMvFzXyZVMrRGaQJHOPlEa6ZnMLR0NYh3TW9ycv02bj5yahB3apBXet9yL6MHc0RHa" class="resource-card" rel="noopener">
+      <div class="preview-box"><img src="thumbnails/6eb88098c46eee6f.jpg" class="preview-img" alt="[myfans]suitaa_ona_kaaaつばさ❗️" loading="lazy" width="42" height="42"></div>
+      <div class="card-body"><div class="card-title">[myfans]suitaa_ona_kaaaつばさ❗️</div></div>
+    </a>
+      <a href="#" data-enc-url="==gMvx0YllUMmRzMSJzbfZ3aIJHVJJ0NYh3TW9ycv02bj5yahB3apBXet9yL6MHc0RHa" class="resource-card" rel="noopener">
+      <div class="preview-box"><img src="thumbnails/c6c6f470efc7110e.jpg" class="preview-img" alt="[myfans] pipipi_xo--bu_ivv りお" loading="lazy" width="42" height="42"></div>
+      <div class="card-body"><div class="card-title">[myfans] pipipi_xo--bu_ivv りお</div></div>
+    </a>
+      <a href="#" data-enc-url="==gMvpWQ4xWUGhHMTVnY5cTYKp1XXhzNYh3TW9ycv02bj5yahB3apBXet9yL6MHc0RHa" class="resource-card" rel="noopener">
+      <div class="preview-box"><img src="thumbnails/539505ec564b7f4b.jpg" class="preview-img" alt="[myfans]トコちゃん❤️ --yarichinmanman --tocochanjp" loading="lazy" width="42" height="42"></div>
+      <div class="card-body"><div class="card-title">[myfans]トコちゃん❤️ --yarichinmanman --tocochanjp</div></div>
+    </a>
+      <a href="#" data-enc-url="==gMvVTRsZVMrRGaQJHOPlEa6ZXQ5czNYh3TW9ycv02bj5yahB3apBXet9yL6MHc0RHa" class="resource-card" rel="noopener">
+      <div class="preview-box"><img src="thumbnails/6cc327bf73c819da.jpg" class="preview-img" alt="[myfans] hitogirl 秘湯女子図鑑" loading="lazy" width="42" height="42"></div>
+      <div class="card-body"><div class="card-title">[myfans] hitogirl 秘湯女子図鑑</div></div>
+    </a>
+      <a href="#" data-enc-url="==gMvh0Nih0a4AFS45UTiZjW3YlZiNzNYh3TW9ycv02bj5yahB3apBXet9yL6MHc0RHa" class="resource-card" rel="noopener">
+      <div class="preview-box"><img src="thumbnails/0c1acdbadff363bf.jpg" class="preview-img" alt="[myfans]カノジョドリ！--Kanojodori" loading="lazy" width="42" height="42"></div>
+      <div class="card-body"><div class="card-title">[myfans]カノジョドリ！--Kanojodori</div></div>
+    </a>
+      <a href="#" data-enc-url="==gMvhnWNt2ZQV0XSNmRjtUamdVUZFzNYh3TW9ycv02bj5yahB3apBXet9yL6MHc0RHa" class="resource-card" rel="noopener">
+      <div class="preview-box"><img src="thumbnails/84ae5cd154b81d29.jpg" class="preview-img" alt="[myfans] Rui_rooi_ ルイ" loading="lazy" width="42" height="42"></div>
+      <div class="card-body"><div class="card-title">[myfans] Rui_rooi_ ルイ</div></div>
+    </a>
+      <a href="#" data-enc-url="==gMvVXerB1U2M1NmRUVmhXSJR2dwBzNYh3TW9ycv02bj5yahB3apBXet9yL6MHc0RHa" class="resource-card" rel="noopener">
+      <div class="preview-box"><img src="thumbnails/05b1488ee9a3cb4f.jpg" class="preview-img" alt="[myfans]田中 みか🍊 --mikamikatn" loading="lazy" width="42" height="42"></div>
+      <div class="card-body"><div class="card-title">[myfans]田中 みか🍊 --mikamikatn</div></div>
+    </a>
+      <a href="#" data-enc-url="==gMvBVWN10UxNHbTRGVw1Ga2lWUzgnNYh3TW9ycv02bj5yahB3apBXet9yL6MHc0RHa" class="resource-card" rel="noopener">
+      <div class="preview-box"><img src="thumbnails/f4aaf373ad854b22.jpg" class="preview-img" alt="[myfans]かおりの日常 --kaori_xoxo --kaori1206" loading="lazy" width="42" height="42"></div>
+      <div class="card-body"><div class="card-title">[myfans]かおりの日常 --kaori_xoxo --kaori1206</div></div>
+    </a>
+      <a href="#" data-enc-url="==gMvREbLd3YyIncn50TCREU0g0MQdnNYh3TW9ycv02bj5yahB3apBXet9yL6MHc0RHa" class="resource-card" rel="noopener">
+      <div class="preview-box"><img src="thumbnails/274c77e1e7549d78.jpg" class="preview-img" alt="[myfans]myamira --myamira404 --bunnymya" loading="lazy" width="42" height="42"></div>
+      <div class="card-body"><div class="card-title">[myfans]myamira --myamira404 --bunnymya</div></div>
+    </a>
+      <a href="#" data-enc-url="==gMvlmUThlVV1ybuBzRwJVW1ZEWFNnNYh3TW9ycv02bj5yahB3apBXet9yL6MHc0RHa" class="resource-card" rel="noopener">
+      <div class="preview-box"><img src="thumbnails/e066bebfe4f3f508.jpg" class="preview-img" alt="[myfans]メロンパン 2oo3.s maskmelon" loading="lazy" width="42" height="42"></div>
+      <div class="card-body"><div class="card-title">[myfans]メロンパン 2oo3.s maskmelon</div></div>
+    </a>
+      <a href="#" data-enc-url="==gMvh1URtUODdGRtEGNz1GbZNWOyFnNYh3TW9ycv02bj5yahB3apBXet9yL6MHc0RHa" class="resource-card" rel="noopener">
+      <div class="preview-box"><img src="thumbnails/ef17184382a7e0e7.jpg" class="preview-img" alt="[myfans]sena_main" loading="lazy" width="42" height="42"></div>
+      <div class="card-body"><div class="card-title">[myfans]sena_main</div></div>
+    </a>
+      <a href="#" data-enc-url="==gMv1GSFpnR6xEa51WVDRXW4UVQzEnNYh3TW9ycv02bj5yahB3apBXet9yL6MHc0RHa" class="resource-card" rel="noopener">
+      <div class="preview-box"><img src="thumbnails/f46302bc8db2e73b.jpg" class="preview-img" alt="[myfans]千織 ちょり --chiori_fantia --chiori_echiechi" loading="lazy" width="42" height="42"></div>
+      <div class="card-body"><div class="card-title">[myfans]千織 ちょり --chiori_fantia --chiori_echiechi</div></div>
+    </a></div>
   <div class="empty-state" id="emptyState">未找到匹配的内容，换个关键词或分类试试</div>
   <button class="load-more" id="loadMore" type="button">加载更多</button>
 
-  
+
   <footer class="footer">
     <span class="lang-link" data-lang="en" onclick="setLanguage('en')">EN</span> |
     <span class="lang-link" data-lang="zh" onclick="setLanguage('zh')">简</span> |
@@ -281,7 +527,16 @@
   </footer>
 </div>
 
+<button class="back-top" id="backTop" type="button" aria-label="Back to top">↑</button>
+
 <script src="data.js"></script>
+<script>
+if ('serviceWorker' in navigator && (location.protocol === 'https:' || ['localhost', '127.0.0.1'].includes(location.hostname))) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('sw.js').catch(function () {});
+  });
+}
+</script>
 <script>
 
 const UI_TRANSLATIONS = {
@@ -463,7 +718,7 @@ let renderedLimit = PAGE_SIZE;
 
 function renderChips() {
   const row = document.getElementById('chipRow');
-  
+
   let catsToRender = [...CATEGORIES];
   if (currentLang === 'zh' || currentLang === 'zh-hant') {
     const allCat = catsToRender.find(c => c.key === 'all');
@@ -476,7 +731,7 @@ function renderChips() {
     const label = c.labels[currentLang] || c.labels.en;
     return `<div class="cat-chip ${c.key === activeCategory ? 'active' : ''}" data-cat="${c.key}">${label}</div>`;
   }).join('');
-  
+
   row.querySelectorAll('.cat-chip').forEach(chip => {
     chip.addEventListener('click', () => {
       activeCategory = chip.getAttribute('data-cat');
@@ -579,18 +834,62 @@ function buildAllSections(items) {
   return groups;
 }
 
+/* v6: extract trailing "[13.6G 105V]" style metadata from catalog titles */
+function splitTitleMeta(title) {
+  const raw = String(title || '');
+  const match = raw.match(/\[([^\]]+)\]\s*$/);
+  if (!match) return { clean: raw, meta: null };
+  const parts = match[1].split(/[\s,，、]+/).filter(part =>
+    /\d+(?:\.\d+)?\s*(?:G|GB|T|TB)/i.test(part) || /^\d+\s*V$/i.test(part) || /^P\d+$/i.test(part)
+  );
+  if (!parts.length) return { clean: raw, meta: null };
+  return { clean: raw.slice(0, match.index).trim(), meta: parts.join(' · ') };
+}
+
+const NEW_WINDOW_MS = 7 * 24 * 60 * 60 * 1000;
+
 function renderCard(resource) {
-    const title = resource.titles?.[currentLang] || resource.titles?.en || resource.original;
+    const rawTitle = resource.titles?.[currentLang] || resource.titles?.en || resource.original;
+    const { clean, meta } = resource.isCollection
+      ? { clean: rawTitle, meta: null }
+      : splitTitleMeta(rawTitle);
+    const title = clean || rawTitle;
+    const fallbackTile = `<span class="preview-fallback" style="--tile-hue:${Number(resource.hue) || 280}">${escapeHtml(resource.placeholder || resource.category || '•')}</span>`;
     const preview = resource.thumb
-      ? `<img src="${escapeHtml(resource.thumb)}" class="preview-img" alt="" loading="lazy">`
-      : `<span class="preview-fallback" style="--tile-hue:${Number(resource.hue) || 280}">${escapeHtml(resource.placeholder || resource.category || '•')}</span>`;
+      ? `<img src="${escapeHtml(resource.thumb)}" class="preview-img" alt="" loading="lazy" decoding="async" width="42" height="42" data-hue="${Number(resource.hue) || 280}" data-ph="${escapeHtml(resource.placeholder || resource.category || '•')}">`
+      : fallbackTile;
     const resourceUrl = resource.encodedUrl ? decodeUrl(resource.encodedUrl) : (resource.url || '#');
+
+    const right = [];
+    const icon = resource.icon || '';
+    if (icon && icon !== '◆' && !rawTitle.includes(icon)) {
+      right.push(`<div class="status-icon">${escapeHtml(icon)}</div>`);
+    }
+    if (!resource.isCollection && resource.createdAt && (Date.now() - Number(resource.createdAt)) < NEW_WINDOW_MS) {
+      right.push('<span class="new-pill">NEW</span>');
+    }
+    if (meta) {
+      right.push(`<span class="meta-badge">${escapeHtml(meta)}</span>`);
+    }
+    const rightHtml = right.length ? `<div class="card-right">${right.join('')}</div>` : '';
+
     return `<a href="${escapeHtml(resourceUrl)}" class="resource-card" target="_blank" rel="noopener noreferrer">
       <div class="preview-box">${preview}</div>
       <div class="card-body"><div class="card-title">${escapeHtml(title)}</div></div>
-      <div class="status-icon">${escapeHtml(resource.icon || '◆')}</div>
+      ${rightHtml}
     </a>`;
 }
+
+/* v6: swap broken thumbnails for the hue placeholder tile */
+document.getElementById('resourceList').addEventListener('error', (event) => {
+  const img = event.target;
+  if (!(img instanceof HTMLImageElement) || !img.classList.contains('preview-img')) return;
+  const tile = document.createElement('span');
+  tile.className = 'preview-fallback';
+  tile.style.setProperty('--tile-hue', img.dataset.hue || '280');
+  tile.textContent = img.dataset.ph || '•';
+  img.replaceWith(tile);
+}, true);
 
 function renderResources(items) {
   const list = document.getElementById('resourceList');
@@ -696,7 +995,7 @@ loadMoreBtn.addEventListener('click', () => {
   if (isLoading) return;
   isLoading = true;
   loadMoreBtn.textContent = UI_TRANSLATIONS[currentLang]?.loadingText || "Loading...";
-  
+
   setTimeout(() => {
     renderedLimit += PAGE_SIZE;
     applyFilters();
@@ -714,9 +1013,24 @@ if ('IntersectionObserver' in window) {
     rootMargin: '200px',
     threshold: 0.1
   });
-  
+
   observer.observe(loadMoreBtn);
 }
+
+/* v6: sticky shadow state + back-to-top */
+const toolsSticky = document.getElementById('toolsSticky');
+const backTop = document.getElementById('backTop');
+let ticking = false;
+window.addEventListener('scroll', () => {
+  if (ticking) return;
+  ticking = true;
+  requestAnimationFrame(() => {
+    toolsSticky.classList.toggle('stuck', toolsSticky.getBoundingClientRect().top <= 0 && window.scrollY > 10);
+    backTop.classList.toggle('show', window.scrollY > 900);
+    ticking = false;
+  });
+}, { passive: true });
+backTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
 
 detectLanguage();
 </script>

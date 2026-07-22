@@ -10,6 +10,7 @@
 <meta name="theme-color" content="#0b0c10">
 <link rel="icon" type="image/png" sizes="48x48" href="favicon-48.png">
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
 <link rel="canonical" href="https://library26.github.io/Backup-URL/">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://library26.github.io/Backup-URL/">
@@ -57,18 +58,15 @@
   .header { display: flex; flex-direction: column; align-items: center; margin-bottom: 20px; text-align: center; }
   .avatar {
     width: 72px; height: 72px; border-radius: 50%;
-    background: linear-gradient(135deg, #1b1d24, #0d0e12);
     box-shadow: 0 0 25px rgba(219, 112, 147, 0.35);
     border: 3px solid rgba(255, 255, 255, 0.95);
-    display: flex; align-items: center; justify-content: center;
-    margin-bottom: 10px; font-weight: 900; font-size: 22px;
-    background-image: var(--accent-grad); -webkit-background-clip: text; background-clip: text; color: transparent;
+    margin-bottom: 10px; object-fit: cover; display: block;
   }
   .title { font-size: 19px; font-weight: 800; letter-spacing: -0.3px; color: #fff; }
   .bio { font-size: 11.5px; color: var(--text-muted); margin-top: 5px; max-width: 320px; line-height: 1.5; }
 
-  
-  .focus-banners { display: flex; flex-direction: column; gap: 10px; margin: 18px 0 20px; width: 100%; }
+
+  .focus-banners { display: flex; flex-direction: column; gap: 10px; margin: 18px 0 14px; width: 100%; }
   .focus-banner {
     display: flex; align-items: center; padding: 14px 18px; border-radius: 12px;
     text-decoration: none; color: #ffffff; transition: transform 0.15s ease, box-shadow 0.15s ease;
@@ -77,6 +75,7 @@
   .tg-banner { background: linear-gradient(135deg, #24A1DE, #1a88bd); box-shadow: 0 4px 14px rgba(36, 161, 222, 0.2); }
   .dc-banner { background: linear-gradient(135deg, #5865F2, #4752c4); box-shadow: 0 4px 14px rgba(88, 101, 242, 0.2); }
   .focus-banner:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
+  .focus-banner:active { transform: scale(0.985); }
   .banner-icon {
     font-size: 16px; font-weight: 900; margin-right: 12px; width: 28px; height: 28px;
     background: rgba(255, 255, 255, 0.2); border-radius: 50%;
@@ -88,11 +87,24 @@
   .banner-arrow { font-size: 18px; opacity: 0.85; transition: transform 0.2s; }
   .focus-banner:hover .banner-arrow { transform: translateX(3px); }
 
-  
+  /* v6: sticky search + chips */
+  .tools-sticky {
+    position: sticky; top: 0; z-index: 60;
+    margin: 0 -14px; padding: 8px 14px 6px;
+    background: rgba(11, 12, 16, 0.82);
+    backdrop-filter: blur(22px); -webkit-backdrop-filter: blur(22px);
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+  .tools-sticky.stuck {
+    border-bottom-color: rgba(255, 255, 255, 0.07);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
+  }
+
   .search-bar {
     display: flex; align-items: center; gap: 8px;
     background: var(--card-bg); border: 1px solid var(--card-border);
-    border-radius: 12px; padding: 10px 14px; margin-bottom: 12px;
+    border-radius: 12px; padding: 10px 14px; margin-bottom: 10px;
     backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
     transition: border-color 0.2s;
   }
@@ -110,10 +122,13 @@
   }
   .search-bar.has-text .search-clear { display: flex; }
 
-  
+  /* v6: chip row with edge fade */
+  .chip-fade { position: relative; }
   .chip-row {
-    display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 14px;
+    display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 8px;
     scrollbar-width: none; -ms-overflow-style: none;
+    -webkit-mask-image: linear-gradient(to right, #000 88%, transparent 100%);
+    mask-image: linear-gradient(to right, #000 88%, transparent 100%);
   }
   .chip-row::-webkit-scrollbar { display: none; }
   .cat-chip {
@@ -122,6 +137,7 @@
     background: rgba(255,255,255,0.04); border: 1px solid var(--card-border);
     cursor: pointer; transition: all 0.15s ease; -webkit-tap-highlight-color: transparent;
   }
+  .cat-chip:active { transform: scale(0.95); }
   .cat-chip.active {
     color: #fff; border-color: transparent;
     background: var(--accent-grad);
@@ -136,6 +152,11 @@
   .section-group-title {
     width: 100%; margin: 4px 0 0; padding: 4px 2px 0;
     color: rgba(255,255,255,0.78); text-transform: none; letter-spacing: 0;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .section-group-title::after {
+    content: ''; flex: 1; height: 1px;
+    background: linear-gradient(to right, rgba(255,255,255,0.12), transparent);
   }
   .section-group-title strong { font-size: 12px; color: #fff; }
   .section-group-title span { font-size: 10px; opacity: 0.72; font-weight: 700; }
@@ -147,10 +168,16 @@
     display: flex; align-items: center; justify-content: space-between; text-decoration: none;
     padding: 10px 14px 10px 10px; background: var(--card-bg); border: 1px solid var(--card-border);
     border-radius: 12px; box-shadow: var(--shadow); backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px); transition: all 0.2s ease; min-height: 56px;
+    -webkit-backdrop-filter: blur(20px); transition: transform 0.15s ease, border-color 0.2s ease, background 0.2s ease;
+    min-height: 56px; -webkit-tap-highlight-color: transparent;
   }
   .resource-card:hover { transform: translateY(-2px); border-color: var(--card-border-hover); }
+  .resource-card:active { transform: scale(0.985); background: rgba(32, 32, 40, 0.85); }
   .resource-card.hidden { display: none; }
+  @media (hover: none) {
+    .resource-card:hover { transform: none; }
+    .focus-banner:hover { transform: none; }
+  }
 
   .preview-box {
     width: 42px; height: 42px; border-radius: 8px; overflow: hidden;
@@ -167,13 +194,27 @@
       #25242d;
   }
   .card-body { flex-grow: 1; min-width: 0; }
-  
+
   .card-title {
     font-size: 13px; font-weight: 700; color: #fff; display: -webkit-box;
     -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
     text-overflow: ellipsis; line-height: 1.4; padding-right: 6px; word-break: break-all;
   }
-  .status-icon { font-size: 14px; color: var(--text-muted); flex-shrink: 0; margin-left: 6px; }
+  .card-right { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; margin-left: 6px; }
+  .status-icon { font-size: 14px; color: var(--text-muted); }
+
+  /* v6: metadata badge + NEW pill */
+  .meta-badge {
+    font-size: 9.5px; font-weight: 700; letter-spacing: 0.2px; white-space: nowrap;
+    color: rgba(255,255,255,0.62); background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.07); border-radius: 6px; padding: 2px 6px;
+    font-variant-numeric: tabular-nums;
+  }
+  .new-pill {
+    font-size: 8.5px; font-weight: 900; letter-spacing: 0.6px; color: #fff;
+    background: var(--accent-grad); border-radius: 5px; padding: 2px 5px;
+    box-shadow: 0 2px 8px rgba(255, 45, 85, 0.35);
+  }
 
   .empty-state {
     display: none; text-align: center; padding: 34px 10px; color: var(--text-muted); font-size: 12.5px;
@@ -192,13 +233,25 @@
   .lang-link { cursor: pointer; margin: 0 4px; text-decoration: underline; }
   .lang-link.active { color: #fff; font-weight: 800; text-decoration: none; }
 
-  
+  /* v6: back to top */
+  .back-top {
+    position: fixed; right: 18px; bottom: 22px; z-index: 70;
+    width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--card-border);
+    background: rgba(22, 22, 28, 0.9); color: #fff; font-size: 17px; cursor: pointer;
+    backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.4);
+    opacity: 0; pointer-events: none; transform: translateY(8px);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+  }
+  .back-top.show { opacity: 1; pointer-events: auto; transform: translateY(0); }
+
   @media (min-width: 768px) {
     .container { max-width: 960px; padding: 40px 24px; }
+    .tools-sticky { margin: 0 -24px; padding: 10px 24px 8px; }
     .focus-banners { flex-direction: row; gap: 20px; }
     .focus-banner { flex: 1; margin: 0; }
-    .search-bar { max-width: 560px; margin: 0 auto 20px auto; }
-    .chip-row { justify-content: center; flex-wrap: wrap; overflow-x: visible; padding-bottom: 0; margin-bottom: 24px; }
+    .search-bar { max-width: 560px; margin: 0 auto 12px auto; }
+    .chip-row { justify-content: center; flex-wrap: wrap; overflow-x: visible; padding-bottom: 0; margin-bottom: 16px; -webkit-mask-image: none; mask-image: none; }
     .cat-chip { margin-bottom: 8px; }
     .list-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 16px; }
     .section-group-title { grid-column: 1 / -1; margin-top: 8px; }
@@ -210,8 +263,6 @@
   }
 </style>
 
-<link rel="icon" type="image/png" sizes="48x48" href="favicon-48.png">
-<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
 <meta name="application-name" content="PikPak">
 <meta property="og:site_name" content="PikPak">
 <script type="application/ld+json">
@@ -227,12 +278,12 @@
 <div class="container">
 
   <header class="header">
-    <img src="pikpaklogo.png" alt="Avatar" class="avatar">
+    <img src="pikpaklogo.png" alt="Avatar" class="avatar" width="72" height="72">
     <h1 class="title" id="ui-title">PikPak 资源合集入口</h1>
     <p class="bio" id="ui-bio">PikPak 热门分享与网盘资源导航，建议收藏本页防失联。</p>
   </header>
 
-  
+
   <div class="focus-banners">
     <a href="#" class="focus-banner tg-banner" id="tgBanner" target="_blank" rel="noopener noreferrer">
       <div class="banner-icon">T</div>
@@ -252,26 +303,28 @@
     </a>
   </div>
 
-  
-  <div class="search-bar" id="searchBar">
-    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-    <input type="text" id="searchInput" placeholder="搜索资源标题或创作者…">
-    <button class="search-clear" id="searchClear">✕</button>
-  </div>
 
-  
-  <div class="chip-row" id="chipRow"></div>
+  <div class="tools-sticky" id="toolsSticky">
+    <div class="search-bar" id="searchBar">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" id="searchInput" placeholder="搜索资源标题或创作者…">
+      <button class="search-clear" id="searchClear">✕</button>
+    </div>
+    <div class="chip-fade">
+      <div class="chip-row" id="chipRow"></div>
+    </div>
+  </div>
 
   <div class="section-title">
     <span id="ui-section-title">资源目录</span>
     <span class="result-count" id="resultCount"></span>
   </div>
 
-  <div class="list-container" id="resourceList"></div>
+  <div class="list-container" id="resourceList"><!--SEO_PRERENDER--></div>
   <div class="empty-state" id="emptyState">未找到匹配的内容，换个关键词或分类试试</div>
   <button class="load-more" id="loadMore" type="button">加载更多</button>
 
-  
+
   <footer class="footer">
     <span class="lang-link" data-lang="en" onclick="setLanguage('en')">EN</span> |
     <span class="lang-link" data-lang="zh" onclick="setLanguage('zh')">简</span> |
@@ -281,7 +334,16 @@
   </footer>
 </div>
 
+<button class="back-top" id="backTop" type="button" aria-label="Back to top">↑</button>
+
 <script src="data.js"></script>
+<script>
+if ('serviceWorker' in navigator && (location.protocol === 'https:' || ['localhost', '127.0.0.1'].includes(location.hostname))) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('sw.js').catch(function () {});
+  });
+}
+</script>
 <script>
 
 const UI_TRANSLATIONS = {
@@ -463,7 +525,7 @@ let renderedLimit = PAGE_SIZE;
 
 function renderChips() {
   const row = document.getElementById('chipRow');
-  
+
   let catsToRender = [...CATEGORIES];
   if (currentLang === 'zh' || currentLang === 'zh-hant') {
     const allCat = catsToRender.find(c => c.key === 'all');
@@ -476,7 +538,7 @@ function renderChips() {
     const label = c.labels[currentLang] || c.labels.en;
     return `<div class="cat-chip ${c.key === activeCategory ? 'active' : ''}" data-cat="${c.key}">${label}</div>`;
   }).join('');
-  
+
   row.querySelectorAll('.cat-chip').forEach(chip => {
     chip.addEventListener('click', () => {
       activeCategory = chip.getAttribute('data-cat');
@@ -579,18 +641,62 @@ function buildAllSections(items) {
   return groups;
 }
 
+/* v6: extract trailing "[13.6G 105V]" style metadata from catalog titles */
+function splitTitleMeta(title) {
+  const raw = String(title || '');
+  const match = raw.match(/\[([^\]]+)\]\s*$/);
+  if (!match) return { clean: raw, meta: null };
+  const parts = match[1].split(/[\s,，、]+/).filter(part =>
+    /\d+(?:\.\d+)?\s*(?:G|GB|T|TB)/i.test(part) || /^\d+\s*V$/i.test(part) || /^P\d+$/i.test(part)
+  );
+  if (!parts.length) return { clean: raw, meta: null };
+  return { clean: raw.slice(0, match.index).trim(), meta: parts.join(' · ') };
+}
+
+const NEW_WINDOW_MS = 7 * 24 * 60 * 60 * 1000;
+
 function renderCard(resource) {
-    const title = resource.titles?.[currentLang] || resource.titles?.en || resource.original;
+    const rawTitle = resource.titles?.[currentLang] || resource.titles?.en || resource.original;
+    const { clean, meta } = resource.isCollection
+      ? { clean: rawTitle, meta: null }
+      : splitTitleMeta(rawTitle);
+    const title = clean || rawTitle;
+    const fallbackTile = `<span class="preview-fallback" style="--tile-hue:${Number(resource.hue) || 280}">${escapeHtml(resource.placeholder || resource.category || '•')}</span>`;
     const preview = resource.thumb
-      ? `<img src="${escapeHtml(resource.thumb)}" class="preview-img" alt="" loading="lazy">`
-      : `<span class="preview-fallback" style="--tile-hue:${Number(resource.hue) || 280}">${escapeHtml(resource.placeholder || resource.category || '•')}</span>`;
+      ? `<img src="${escapeHtml(resource.thumb)}" class="preview-img" alt="" loading="lazy" decoding="async" width="42" height="42" data-hue="${Number(resource.hue) || 280}" data-ph="${escapeHtml(resource.placeholder || resource.category || '•')}">`
+      : fallbackTile;
     const resourceUrl = resource.encodedUrl ? decodeUrl(resource.encodedUrl) : (resource.url || '#');
+
+    const right = [];
+    const icon = resource.icon || '';
+    if (icon && icon !== '◆' && !rawTitle.includes(icon)) {
+      right.push(`<div class="status-icon">${escapeHtml(icon)}</div>`);
+    }
+    if (!resource.isCollection && resource.createdAt && (Date.now() - Number(resource.createdAt)) < NEW_WINDOW_MS) {
+      right.push('<span class="new-pill">NEW</span>');
+    }
+    if (meta) {
+      right.push(`<span class="meta-badge">${escapeHtml(meta)}</span>`);
+    }
+    const rightHtml = right.length ? `<div class="card-right">${right.join('')}</div>` : '';
+
     return `<a href="${escapeHtml(resourceUrl)}" class="resource-card" target="_blank" rel="noopener noreferrer">
       <div class="preview-box">${preview}</div>
       <div class="card-body"><div class="card-title">${escapeHtml(title)}</div></div>
-      <div class="status-icon">${escapeHtml(resource.icon || '◆')}</div>
+      ${rightHtml}
     </a>`;
 }
+
+/* v6: swap broken thumbnails for the hue placeholder tile */
+document.getElementById('resourceList').addEventListener('error', (event) => {
+  const img = event.target;
+  if (!(img instanceof HTMLImageElement) || !img.classList.contains('preview-img')) return;
+  const tile = document.createElement('span');
+  tile.className = 'preview-fallback';
+  tile.style.setProperty('--tile-hue', img.dataset.hue || '280');
+  tile.textContent = img.dataset.ph || '•';
+  img.replaceWith(tile);
+}, true);
 
 function renderResources(items) {
   const list = document.getElementById('resourceList');
@@ -696,7 +802,7 @@ loadMoreBtn.addEventListener('click', () => {
   if (isLoading) return;
   isLoading = true;
   loadMoreBtn.textContent = UI_TRANSLATIONS[currentLang]?.loadingText || "Loading...";
-  
+
   setTimeout(() => {
     renderedLimit += PAGE_SIZE;
     applyFilters();
@@ -714,9 +820,24 @@ if ('IntersectionObserver' in window) {
     rootMargin: '200px',
     threshold: 0.1
   });
-  
+
   observer.observe(loadMoreBtn);
 }
+
+/* v6: sticky shadow state + back-to-top */
+const toolsSticky = document.getElementById('toolsSticky');
+const backTop = document.getElementById('backTop');
+let ticking = false;
+window.addEventListener('scroll', () => {
+  if (ticking) return;
+  ticking = true;
+  requestAnimationFrame(() => {
+    toolsSticky.classList.toggle('stuck', toolsSticky.getBoundingClientRect().top <= 0 && window.scrollY > 10);
+    backTop.classList.toggle('show', window.scrollY > 900);
+    ticking = false;
+  });
+}, { passive: true });
+backTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
 
 detectLanguage();
 </script>
